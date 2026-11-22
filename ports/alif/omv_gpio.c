@@ -54,7 +54,11 @@ void omv_gpio_config(omv_gpio_t pin, uint32_t mode, uint32_t pull, uint32_t spee
     GPIO_Type *gpio = omv_gpio_get_base(pin);
     uint16_t pad_config = (mode | pull | speed | pin->ren) & 0xFF;
 
-    af = (af == -1) ? pin->af : af;
+    if (mode == OMV_GPIO_MODE_INPUT || mode == OMV_GPIO_MODE_OUTPUT || mode == OMV_GPIO_MODE_OUTPUT_OD) {
+        af = PINMUX_ALTERNATE_FUNCTION_0;
+    } else {
+        af = (af == -1) ? pin->af : af;
+    }
     pinconf_set(pin->port, pin->pin, af, pad_config);
 
     // If pad was configured for GPIO module, set the pin config.
